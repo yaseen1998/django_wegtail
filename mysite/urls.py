@@ -9,6 +9,7 @@ from wagtail.documents import urls as wagtaildocs_urls
 from search import views as search_views
 
 urlpatterns = [
+     path('flex/',include('flex.urls')),
     path("django-admin/", admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
     path("admin/", include(wagtailadmin_urls)),
