@@ -1,8 +1,10 @@
 from django.db import models
 
 from wagtail.models import Page
+from streams.blocks import *
+from wagtail.core.fields import StreamField
 from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel,PageChooserPanel
+from wagtail.admin.edit_handlers import FieldPanel,PageChooserPanel,StreamFieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 class HomePage(Page):
     templates = "home/home_page.html"
@@ -29,8 +31,13 @@ class HomePage(Page):
         FieldPanel("banner_subtitl"),
         ImageChooserPanel("banner_image"),
         PageChooserPanel("bannerr_cta"),
+        StreamFieldPanel("content"),
 
     ]
+    content = StreamField([
+        ('cta', CTABlock()),    
+    ],
+    null=True,blank=True)
 
 
     def something(self):
