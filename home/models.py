@@ -1,11 +1,31 @@
+from curses import panel
 from django.db import models
 
 from wagtail.models import Page
 from streams.blocks import *
-from wagtail.core.fields import StreamField
-from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel,PageChooserPanel,StreamFieldPanel
+from wagtail.core.fields import RichTextField,StreamField
+from wagtail.admin.edit_handlers import FieldPanel,PageChooserPanel,StreamFieldPanel,InlinePanel,MultiFieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
+
+from wagtail.core.models import Orderable
+from modelcluster.fields import ParentalKey
+from streams import blocks
+
+
+class HomePAgeCourseImage(Orderable):
+    page = ParentalKey('home.HomePage', related_name='carousel_images')
+    carousel_image = models.ForeignKey (
+        "wagtailimages.Image",
+        null = True,
+        blank = False,
+        on_delete = models.SET_NULL,
+        related_name = "+"
+    )
+    
+    panels = [
+        ImageChooserPanel('carousel_image')
+        ]
+
 class HomePage(Page):
     templates = "home/home_page.html"
     # max_count = 1 # number of child 
@@ -27,11 +47,17 @@ class HomePage(Page):
         related_name = "home_page_banner_cta"
     )
     content_panels = Page.content_panels + [
-        FieldPanel("banner_title"),
+        MultiFieldPanel([
+             FieldPanel("banner_title"),
         FieldPanel("banner_subtitl"),
         ImageChooserPanel("banner_image"),
         PageChooserPanel("bannerr_cta"),
+        ],heading="Home Page Banner"),
+       MultiFieldPanel([
+        InlinePanel("carousel_images",max_num=4,min_num=1,label="image"),
+        ],heading="Carousel Images"),
         StreamFieldPanel("content"),
+        
 
     ]
     content = StreamField([
