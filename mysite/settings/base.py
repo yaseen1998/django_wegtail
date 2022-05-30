@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "search",
     "flex",
     "streams",
+    'subscribe',
     "site_setting",
     'rest_framework',
     "debug_toolbar",
@@ -41,7 +42,10 @@ INSTALLED_APPS = [
     "wagtail.images",
     "wagtail.search",
     "wagtail.admin",
+
     "wagtail.contrib.settings",
+    "wagtail.contrib.modeladmin",
+    
     "wagtail",
     "modelcluster",
     "taggit",

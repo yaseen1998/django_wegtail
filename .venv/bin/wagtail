@@ -1,4 +1,4 @@
-#!/home/yaseen/django/django_wegtail/.venv/bin/python
+#!/home/yaseen/mysite/.venv/bin/python3.9
 # -*- coding: utf-8 -*-
 import re
 import sys
