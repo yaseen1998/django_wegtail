@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     "search",
     "flex",
     "streams",
+    "blog" ,
+
     'subscribe',
     "site_setting",
     'rest_framework',
