@@ -1,4 +1,4 @@
-#!/home/yaseen/mysite/.venv/bin/python3.9
+#!/home/yaseen/django/django_wegtail/.venv/bin/python
 
 ##############################################################################
 #

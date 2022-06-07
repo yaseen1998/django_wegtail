@@ -12,6 +12,7 @@ class FlexPage(Page):
         ("simple_richtext", SimpleRichtextBlock()),
         ("cards", CardBlock()),
         ('cta', CTABlock()),
+        ('button', ButtonBlock()),
         
     ],
     null=True,blank=True)
@@ -24,3 +25,5 @@ class FlexPage(Page):
     class Meta :
         verbose_name = "Flex Page"
         verbose_name_plural = "Flex Pages"
+        
+    

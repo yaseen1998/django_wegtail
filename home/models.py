@@ -11,6 +11,8 @@ from wagtail.core.models import Orderable
 from modelcluster.fields import ParentalKey
 from streams import blocks
 
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+from django.shortcuts import render
 
 class HomePAgeCourseImage(Orderable):
     page = ParentalKey('home.HomePage', related_name='carousel_images')
@@ -26,7 +28,7 @@ class HomePAgeCourseImage(Orderable):
         ImageChooserPanel('carousel_image')
         ]
 
-class HomePage(Page):
+class HomePage(RoutablePageMixin,Page):
     templates = "home/home_page.html"
     # max_count = 1 # number of child 
 
@@ -72,3 +74,11 @@ class HomePage(Page):
     class Meta : 
         verbose_name = "hellow world"
         verbose_name_plural = "hello worlds "
+        
+        
+    @route(r'^subscribe/$')
+    def the_subscribe_page(self, request, *args, **kwargs):
+        context = self.get_context(request, *args, **kwargs)
+        context['a_special_test'] = 'Hello World 123456'
+        return render(request, 'home/subscribe.html', context)
+    

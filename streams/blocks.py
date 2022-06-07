@@ -55,3 +55,25 @@ class CTABlock(blocks.StructBlock):
         template = "streams/cta_block.html"
         icon = "placeholder"
         label = "Call to Action"
+  
+  
+class LinkStructValue(blocks.StructValue):
+    def url(self):
+        if self.get('button_page'):
+            return self.get('button_page').url
+        elif self.get('button_url'):
+            return self.get('button_url')
+        else:
+            return None      
+        
+class ButtonBlock(blocks.StructBlock):
+    button_page = blocks.PageChooserBlock(required=False,help_text="Button will link to this page")
+    button_url = blocks.URLBlock(required=False,help_text="Button will link to this URL")
+    
+    class Meta:
+        template = "streams/button_block.html"
+        icon = "placeholder"
+        label = "button block"
+        value_class = LinkStructValue
+        
+        

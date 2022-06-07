@@ -8,6 +8,8 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from search import views as search_views
 
+from wagtail.contrib.sitemaps.views import sitemap
+
 urlpatterns = [
      path('flex/',include('flex.urls')),
     path("django-admin/", admin.site.urls),
@@ -15,6 +17,8 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
+    
+    path('sitemap.xml', sitemap),
 ]
 
 

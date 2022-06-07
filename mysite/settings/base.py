@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "home",
     "search",
     "flex",
+    'blog',
     "streams",
     'subscribe',
     "site_setting",
@@ -44,7 +45,11 @@ INSTALLED_APPS = [
     "wagtail.admin",
 
     "wagtail.contrib.settings",
+    "wagtail.contrib.routable_page",
+    "wagtail.contrib.sitemaps",
     "wagtail.contrib.modeladmin",
+    
+    'django.contrib.sitemaps',
     
     "wagtail",
     "modelcluster",
