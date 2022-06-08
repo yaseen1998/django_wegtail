@@ -1,4 +1,5 @@
 """Blog listing and blog detail pages."""
+from tabnanny import verbose
 from django import forms
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
@@ -53,6 +54,8 @@ class BlogListingPage(RoutablePageMixin, Page):
         context['posts'] = BlogDetailPage.objects.live().public().order_by('-first_published_at')
         context['regular_contaxt_var'] = 'Hello world!'
         context['link'] = self.reverse_subpage(name='latest_posts')
+        context['author'] = BlogAuthor.objects.all()
+        context['categories'] = BlogCategory.objects.all()
         return context
 
     @route(r'^latest/$',name='latest_posts')
@@ -94,6 +97,7 @@ class BlogDetailPage(Page):
         on_delete=models.SET_NULL,
     )
 
+    categories = ParentalManyToManyField("blog.BlogCategory", blank=True)
 
     content = StreamField(
         [
@@ -111,11 +115,98 @@ class BlogDetailPage(Page):
         FieldPanel("custom_title"),
         ImageChooserPanel("banner_image"),
         StreamFieldPanel("content"),
+        MultiFieldPanel([
+            InlinePanel("blog_authors", label="Author",min_num = 1,max_num = 3),
+        ], heading="Author(s)"),
+        MultiFieldPanel([
+            FieldPanel("categories",widget = forms.CheckboxSelectMultiple),
+        ], heading="Categories"),
+    
     ]
 
 
 
 
+class BlogAuthor(models.Model):
+    """Blog author."""
 
+    name = models.CharField(max_length=255)
+    website = models.URLField(blank=True,null = True)
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        blank=False,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name = '+'
+    )
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel("name"),
+            ImageChooserPanel('image'),
+        ],
+        heading = 'Author Info',
+        ),
+        MultiFieldPanel([
+            FieldPanel("website"),
+        ],
+        heading = 'Author Links',
+        )
+        
+    ]
+    class Meta : 
+        verbose_name = 'Blog Author'
+        verbose_name_plural = 'Blog Authors'
+        
+
+
+    def __str__(self):
+        return self.name
+
+register_snippet(BlogAuthor)
 
   
+class BlogAuthorOrderable(Orderable):
+    """Blog author orderable."""
+
+    page = ParentalKey(
+        "blog.BlogDetailPage",
+        related_name="blog_authors",
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        "blog.BlogAuthor",
+        on_delete=models.CASCADE,
+    )
+
+    panels = [
+        SnippetChooserPanel("author"),
+    ]
+    
+    
+    
+class BlogCategory(models.Model):
+    """Blog category."""
+
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(
+        verbose_name="slug",
+        allow_unicode=True,
+        max_length=255,
+        help_text="A slug is a short text label, generally used in URLs, "
+        )
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug"),
+    ]
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Blog Category"
+        verbose_name_plural = "Blog Categories"
+        ordering=['-name']
+
+register_snippet(BlogCategory)

@@ -5,6 +5,15 @@
 {% block content %}
 <a href="{% routablepageurl page "latest_posts" %}"> view latest </a>
 <h1>link {{link}}</h1>
+<h1>Categories</h1>
+    <ul>
+        {% for cat in categories.all %}
+        <li>
+             
+            <a href="?category={{cat.slug}}">{{cat.name}} </a>
+        </li>
+        {% endfor %}
+    </ul>
     {% for post in posts %}
     {% image post.banner_image fill-250x250 as img %}
     <br/>
