@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'subscribe',
     "site_setting",
     'rest_framework',
+    'django_extensions',
+    
     "debug_toolbar",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",

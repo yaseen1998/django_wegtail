@@ -51,11 +51,22 @@ class BlogListingPage(RoutablePageMixin, Page):
     def get_context(self, request, *args, **kwargs):
         """Adding custom stuff to our context."""
         context = super().get_context(request, *args, **kwargs)
-        context['posts'] = BlogDetailPage.objects.live().public().order_by('-first_published_at')
+        # context['posts'] = BlogDetailPage.objects.live().public().order_by('-first_published_at')
         context['regular_contaxt_var'] = 'Hello world!'
         context['link'] = self.reverse_subpage(name='latest_posts')
         context['author'] = BlogAuthor.objects.all()
         context['categories'] = BlogCategory.objects.all()
+        all_post = BlogDetailPage.objects.live().public().order_by('-first_published_at')
+        paginator = Paginator(all_post, 1)
+        page = request.GET.get('page')
+        try : 
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        
+        context['posts'] = posts
         return context
 
     @route(r'^latest/$',name='latest_posts')
@@ -210,3 +221,61 @@ class BlogCategory(models.Model):
         ordering=['-name']
 
 register_snippet(BlogCategory)
+
+
+
+# first subclass blog post page 
+class ArticalBlogPage(BlogDetailPage):
+    """A subclass of the Blog Detail Page."""
+
+    template = 'blog/artical_blog_page.html'
+    subtitile = models.CharField(max_length=100, blank=True, null=True)
+    intro_image = models.ForeignKey("wagtailimages.Image",blank=True,null=True,on_delete=models.SET_NULL
+                                    ,related_name="+",help_text = "This image will be used to represent the page in the 1400x1400px image.")
+    
+    content_panels = Page.content_panels + [
+        FieldPanel("custom_title"),
+        FieldPanel("subtitile"),
+        ImageChooserPanel("banner_image"),
+        ImageChooserPanel("intro_image"),
+        StreamFieldPanel("content"),
+        MultiFieldPanel([
+            InlinePanel("blog_authors", label="Author",min_num = 1,max_num = 3),
+        ], heading="Author(s)"),
+        MultiFieldPanel([
+            FieldPanel("categories",widget = forms.CheckboxSelectMultiple),
+        ], heading="Categories"),
+    
+    ]
+    
+    class Meta:
+        verbose_name = "Artical Blog"
+        verbose_name_plural = "Artical Blogs"
+ 
+ 
+ # seocnd subclass page
+class VideoBlogPage(BlogDetailPage):
+    youtube_video_id = models.CharField(max_length=100, blank=True, null=True)
+    
+    template = 'blog/video_blog_page.html'
+    
+    content_panels = Page.content_panels + [
+        FieldPanel("custom_title"),
+        FieldPanel("youtube_video_id"),
+        ImageChooserPanel("banner_image"),
+        StreamFieldPanel("content"),
+        MultiFieldPanel([
+            InlinePanel("blog_authors", label="Author",min_num = 1,max_num = 3),
+        ], heading="Author(s)"),
+        MultiFieldPanel([
+            FieldPanel("categories",widget = forms.CheckboxSelectMultiple),
+        ], heading="Categories"),
+    
+    ]
+    
+
+    """
+    just BlogDetailpage / BlogDetailPage.objects.live().exact_type(BlogDetailPage)
+    every thing except the BlogDetailpage / BlogDetailPage.objects.live().not_exact_type(BlogDetailPage)
+    BlogDetailPage.objects.live().exact_type(ArticalBlogPage).specific(defer=False)
+    """
